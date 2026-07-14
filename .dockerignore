@@ -1,0 +1,18 @@
+# Exclude large CSV datasets
+*.csv
+
+# Exclude frontend assets
+echolink_frontend/
+screenshots/
+
+# Exclude git & test caches
+.git/
+.pytest_cache/
+.github/
+
+# Exclude python environments
+.venv/
+venv/
+env/
+ENV/
+__pycache__/

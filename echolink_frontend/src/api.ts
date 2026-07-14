@@ -1,7 +1,4 @@
-// EchoLink API client
-// All calls go through this file — change BASE to switch environments.
-
-const BASE = 'http://localhost:8000';
+const BASE = (import.meta.env && import.meta.env.VITE_API_URL) || `${window.location.protocol}//${window.location.hostname}:8000`;
 
 // ── Types ──────────────────────────────────────────────────────────────
 

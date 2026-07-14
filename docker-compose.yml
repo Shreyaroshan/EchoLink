@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: echolink_db
+    restart: always
+    environment:
+      POSTGRES_DB: echolink
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgresql
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: echolink_api/Dockerfile
+    container_name: echolink_backend
+    restart: always
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: echolink
+      DB_USER: postgres
+      DB_PASSWORD: postgresql
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: echolink_frontend
+      dockerfile: Dockerfile
+    container_name: echolink_frontend
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:
