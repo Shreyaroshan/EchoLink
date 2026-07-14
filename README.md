@@ -16,12 +16,19 @@ Discover recommendations using Apriori or FP-Growth algorithms, with customizabl
 | :---: | :---: | :---: |
 | ![Discover Apriori](screenshots/discover_apriori.png) | ![Discover FP-Growth](screenshots/discover_fpgrowth.png) | ![Same Artist Hidden](screenshots/discover_same_artist.png) |
 
-### 2. Interactive Features (Co-occurrence Network & Benchmark Dashboard)
-Explore relations using the interactive force-directed graph (D3.js) or benchmark algorithm execution metrics live.
+### 2. Explorer View (D3.js Force-Directed Co-occurrence Network)
+Search a track to visualize the relationships between songs. Thicker edges indicate stronger Jaccard co-occurrence similarity. Click nodes to expand and browse rules.
 
-| Co-occurrence Network | Benchmark Dashboard |
+| 7 Connections | 50 Connections |
 | :---: | :---: |
-| ![Co-occurrence Network](screenshots/explorer_network.png) | ![Benchmark Dashboard](screenshots/benchmark.png) |
+| ![Co-occurrence Network 7](screenshots/explorer_network.png) | ![Co-occurrence Network 50](screenshots/explorer_network_large.png) |
+
+### 3. Benchmark Dashboard & About Views
+Compare execution metrics side-by-side or read the supermarket basket analogy and architectural pipeline.
+
+| Benchmark Dashboard | About View |
+| :---: | :---: |
+| ![Benchmark Dashboard](screenshots/benchmark.png) | ![About View](screenshots/about_view.png) |
 
 ---
 
