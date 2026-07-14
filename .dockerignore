@@ -1,8 +1,9 @@
 # Exclude large CSV datasets
 *.csv
 
-# Exclude frontend assets
-echolink_frontend/
+# Exclude frontend local builds & node modules
+echolink_frontend/node_modules/
+echolink_frontend/dist/
 screenshots/
 
 # Exclude git & test caches
