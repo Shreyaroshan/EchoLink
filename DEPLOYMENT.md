@@ -1,97 +1,81 @@
-# EchoLink — Deployment Guide (Docker Compose)
-*Production and local containerized deployment guide for the EchoLink Music Recommendation Engine*
+# EchoLink — Unified Service Deployment Guide
+*Production and local deployment guide for running the EchoLink Recommendation Engine inside a single container*
 
-This document explains how to deploy the full EchoLink stack (PostgreSQL database, FastAPI backend, and Vite React frontend) using **Docker** and **Docker Compose**.
+This guide explains how to deploy the EchoLink application as a **Unified Service** (serving the Vite React frontend directly from the FastAPI Python server). This allows the entire application to run on a **single port (8000)**, completely resolving CORS issues and making it 100% compatible with free-tier platforms (like Render's single web-service constraint).
 
 ---
 
 ## Architecture Overview
 
-Using Docker Compose, the system is separated into three containerized services communicating over an internal Docker network:
-
 ```
                   [ Web Browser (User) ]
                             │
-                            │ Port 80 (HTTP)
+                            │ Port 8000 (HTTP)
                             ▼
-              [ frontend service (Nginx) ]
+           [ echolink_app Service (FastAPI) ]
+           ├── API Endpoints (/search, /recommend)
+           └── Static Frontend (/assets, index.html)
                             │
-                            │ API calls (Port 8000)
+                            │ Port 5432 (Internal)
                             ▼
-               [ backend service (FastAPI) ]
-                            │
-                            │ Port 5432
-                            ▼
-             [ db service (PostgreSQL 17) ]
+             [ db Service (PostgreSQL 17) ]
                             │
                       (Docker Volume)
                      [ postgres_data ]
 ```
 
-* **`db` service:** Hosts PostgreSQL 17. Maps database files to a persistent Docker volume (`postgres_data`) so data survives container restarts.
-* **`backend` service:** Runs the FastAPI application on port `8000`.
-* **`frontend` service:** Builds the React/TypeScript app and serves the built assets using a custom **Nginx** configuration on port `80`.
+* **Frontend serving:** In production, the React frontend is compiled into static HTML/CSS/JS. FastAPI is configured to serve these files staticially under the `/` path.
+* **CORS-Free:** Because the UI and API share the exact same host and port, no cross-origin configurations are needed.
 
 ---
 
-## Prerequisites
+## 🛠️ Local Deployment via Docker Compose
 
-Before deploying, ensure you have the following installed on your target machine (local computer or VPS remote server):
-* **Docker** (v20.10 or higher)
-* **Docker Compose** (v2.0 or higher)
-
----
-
-## 🛠️ Step-by-Step Deployment Instructions
-
-### 1. Project Configuration (Dynamic Backend URL)
-In the frontend configuration ([echolink_frontend/src/api.ts](echolink_frontend/src/api.ts)), we support a dynamic backend URL config:
-```typescript
-const BASE = import.meta.env.VITE_API_URL || `${window.location.protocol}//${window.location.hostname}:8000`;
-```
-This ensures the frontend automatically connects to the backend API running on port `8000` of the server hosting it, without hardcoding any IP addresses.
-
-### 2. Launch the Services
-From the root directory of the project, run:
+### 1. Run the Container Stack
+From the project root directory, spin up the database and the unified application container:
 ```bash
 docker compose up --build -d
 ```
-This command:
-* Builds the Backend Docker image.
-* Runs a multi-stage build for the Frontend (Nginx + static compilation).
-* Downloads PostgreSQL 17.
-* Launches all services in detached background mode (`-d`).
+This builds a **multi-stage Dockerfile**:
+1. **Stage 1 (Node.js):** Installs frontend dependencies and builds the React app into `echolink_frontend/dist/`.
+2. **Stage 2 (Python):** Installs FastAPI dependencies, copies the backend code, imports the frontend `dist/` directory, and starts Uvicorn.
 
-Verify the status of the containers:
-```bash
-docker compose ps
-```
-
----
-
-## 💾 Populating the Database (Seeding the rules)
-
-Because the large ruleset CSV datasets (1.5 GB+) are excluded from Git, the containerized PostgreSQL database starts empty. 
-
-To seed the database, run the data loading script from your **local system** (where the raw CSVs are saved), pointing to the target server's host:
-
-### For Local Docker Testing:
+### 2. Populate the Database (Seeding)
+Because database `.csv` files are excluded from git, the PostgreSQL database initializes empty. Seed it by running the script from your **local system** (where the raw CSVs are saved), pointing to the dockerized server port:
 ```bash
 DB_HOST=localhost DB_PORT=5432 DB_PASSWORD=postgresql python3 phase_3a_database.py
 ```
 
-### For Remote VPS Server Deployment:
-```bash
-DB_HOST=<YOUR_SERVER_IP_OR_DOMAIN> DB_PORT=5432 DB_PASSWORD=postgresql python3 phase_3a_database.py
-```
-
-*Note: Make sure your remote server's firewall allows incoming connections on port `5432` during the seeding phase, or perform the seeding locally before exporting a Docker DB volume.*
+### 3. Verification
+* **Access App:** Open `http://localhost:8000` in your web browser.
+* **Access API Docs:** Open `http://localhost:8000/docs` to view the FastAPI Swagger UI.
 
 ---
 
-## 🧪 Verification & Access
+## 🚀 Free Production Deployment (Render + Neon.tech)
 
-Once built and seeded:
-* **Frontend UI:** Open your browser and navigate to `http://localhost` (or `http://your-server-ip`).
-* **FastAPI Backend Swagger UI:** Access endpoints directly and view documentation at `http://localhost:8000/docs`.
-* **Database Access:** Connect directly using pgAdmin or a CLI client on port `5432`.
+To host EchoLink online completely for free, use a combination of **Neon** (for PostgreSQL database) and **Render** (for the Unified App Service):
+
+### 1. Set Up the Free Database (Neon)
+1. Go to [Neon.tech](https://neon.tech/) and create a free PostgreSQL project named `echolink`.
+2. Copy the database connection string from the dashboard.
+3. Seed the Neon database by running the loader locally from your computer:
+   ```bash
+   DB_HOST=your-neon-hostname.neon.tech DB_PORT=5432 DB_NAME=neondb DB_USER=your_user DB_PASSWORD=your_password python3 phase_3a_database.py
+   ```
+
+### 2. Deploy the App Container (Render)
+1. Log in to [Render.com](https://render.com/).
+2. Click **New +** and select **Web Service**.
+3. Link your GitHub repository.
+4. Set the following settings:
+   * **Language:** `Docker`
+   * **Docker Command:** *Leave empty (uses CMD from Dockerfile)*
+   * **Instance Type:** `Free`
+5. Click **Advanced** and add the following **Environment Variables**:
+   * `DB_HOST`: *Your Neon database hostname*
+   * `DB_PORT`: `5432`
+   * `DB_NAME`: `neondb`
+   * `DB_USER`: *Your Neon user*
+   * `DB_PASSWORD`: *Your Neon password*
+6. Click **Deploy Web Service**. Render will build the Docker container and host it at a free `onrender.com` URL!

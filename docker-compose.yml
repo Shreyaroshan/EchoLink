@@ -12,11 +12,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  backend:
+  app:
     build:
       context: .
-      dockerfile: echolink_api/Dockerfile
-    container_name: echolink_backend
+      dockerfile: Dockerfile
+    container_name: echolink_app
     restart: always
     environment:
       DB_HOST: db
@@ -28,17 +28,6 @@ services:
       - "8000:8000"
     depends_on:
       - db
-
-  frontend:
-    build:
-      context: echolink_frontend
-      dockerfile: Dockerfile
-    container_name: echolink_frontend
-    restart: always
-    ports:
-      - "80:80"
-    depends_on:
-      - backend
 
 volumes:
   postgres_data:

@@ -373,3 +373,22 @@ def get_benchmark():
             ) if len(rulesets) >= 2 else None,
         }
     }
+
+
+# ── UNIFIED frontend SERVING ───────────────────────────────────────────
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+import os
+
+if os.path.exists("dist"):
+    # Serve compiled assets (JS, CSS, images)
+    app.mount("/assets", StaticFiles(directory="dist/assets"), name="assets")
+
+    # Catch-all to serve frontend client-side router index.html or public assets
+    @app.get("/{catchall:path}", include_in_schema=False)
+    def serve_spa(catchall: str):
+        public_file = os.path.join("dist", catchall)
+        if os.path.isfile(public_file):
+            return FileResponse(public_file)
+        return FileResponse("dist/index.html")
+
