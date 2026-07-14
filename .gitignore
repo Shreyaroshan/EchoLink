@@ -1,0 +1,21 @@
+# Large Spotify and rules dataset files
+*.csv
+
+# Python cache & environment folders
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.venv/
+venv/
+ENV/
+env/
+
+# Node/Vite packages and production build folders
+echolink_frontend/node_modules/
+echolink_frontend/dist/
+.DS_Store
+
+# IDE configurations
+.idea/
+.vscode/
