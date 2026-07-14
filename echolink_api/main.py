@@ -48,12 +48,20 @@ app.add_middleware(
 @app.get("/", tags=["Health"])
 def root():
     """Health check — confirms API and DB are up."""
-    result = db.query_one("SELECT COUNT(*) AS rule_count FROM rules;")
+    try:
+        result = db.query_one("SELECT COUNT(*) AS rule_count FROM rules;")
+        rule_count = result["rule_count"] if result else 0
+        db_status = "ok"
+    except Exception as e:
+        rule_count = 0
+        db_status = f"unseeded/error: {str(e)}"
+        
     return {
         "status": "ok",
         "service": "EchoLink API",
         "version": "1.0.0",
-        "rule_count": result["rule_count"] if result else 0,
+        "database": db_status,
+        "rule_count": rule_count,
     }
 
 
