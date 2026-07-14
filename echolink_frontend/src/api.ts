@@ -108,7 +108,7 @@ async function get<T>(path: string): Promise<T> {
 }
 
 export function healthCheck() {
-  return get<{ status: string; rule_count: number }>('/');
+  return get<{ status: string; rule_count: number }>('/health');
 }
 
 export function searchTracks(q: string, limit = 10, rulesetId = 1, signal?: AbortSignal) {

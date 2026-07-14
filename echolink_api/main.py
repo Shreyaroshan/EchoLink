@@ -45,7 +45,7 @@ app.add_middleware(
 # HEALTH CHECK
 # ══════════════════════════════════════════════════════════════════════
 
-@app.get("/", tags=["Health"])
+@app.get("/health", tags=["Health"])
 def root():
     """Health check — confirms API and DB are up."""
     try:

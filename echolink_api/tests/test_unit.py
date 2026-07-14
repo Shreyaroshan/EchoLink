@@ -16,7 +16,7 @@ def test_health_check_unit(mock_query_one, client):
     """Test health check endpoint with mocked database count."""
     mock_query_one.return_value = {"rule_count": 127246}
     
-    response = client.get("/")
+    response = client.get("/health")
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "ok"

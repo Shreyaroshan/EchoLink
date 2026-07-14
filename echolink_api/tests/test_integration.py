@@ -38,7 +38,7 @@ def test_db_connection():
 
 def test_health_check_integration(client):
     """Test health check directly interacts with the database and returns total rule count."""
-    response = client.get("/")
+    response = client.get("/health")
     assert response.status_code == 200
     data = response.json()
     assert data["status"] == "ok"
