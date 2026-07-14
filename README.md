@@ -7,15 +7,21 @@ EchoLink is a data-driven music recommendation system that recommends tracks bas
 
 ## 📸 Screenshots
 
-*Below are screenshots showcasing the EchoLink user interface. To add screenshots, place your image files in a `screenshots/` folder and link them below.*
+Below are screenshots showcasing the EchoLink user interface:
 
-| Discover View | Co-occurrence Network |
-| :---: | :---: |
-| ![Discover View Placeholder](https://via.placeholder.com/600x350/13131c/f1f5f9?text=Discover+Recommendations+View) | ![Co-occurrence Network Placeholder](https://via.placeholder.com/600x350/13131c/f1f5f9?text=Explorer+D3.js+Force+Graph+Network) |
+### 1. Discover View (Music Recommendation Engine)
+Discover recommendations using Apriori or FP-Growth algorithms, with customizable sort metrics and filters (such as filtering out same-artist results).
 
-| Benchmark Dashboard | About View |
+| Apriori Ruleset | FP-Growth Ruleset | Same Artist Hidden |
+| :---: | :---: | :---: |
+| ![Discover Apriori](screenshots/discover_apriori.png) | ![Discover FP-Growth](screenshots/discover_fpgrowth.png) | ![Same Artist Hidden](screenshots/discover_same_artist.png) |
+
+### 2. Interactive Features (Co-occurrence Network & Benchmark Dashboard)
+Explore relations using the interactive force-directed graph (D3.js) or benchmark algorithm execution metrics live.
+
+| Co-occurrence Network | Benchmark Dashboard |
 | :---: | :---: |
-| ![Benchmark Dashboard Placeholder](https://via.placeholder.com/600x350/13131c/f1f5f9?text=Algorithm+Benchmark+Dashboard) | ![About View Placeholder](https://via.placeholder.com/600x350/13131c/f1f5f9?text=How+It+Works+Documentation+View) |
+| ![Co-occurrence Network](screenshots/explorer_network.png) | ![Benchmark Dashboard](screenshots/benchmark.png) |
 
 ---
 
