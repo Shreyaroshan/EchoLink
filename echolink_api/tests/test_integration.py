@@ -21,7 +21,7 @@ except Exception as e:
 
 def test_db_connection():
     """Verify that we can establish a connection to the PostgreSQL database."""
-    conn = db.pool.getconn()
+    conn = db.get_pool().getconn()
     try:
         assert conn is not None
         cur = conn.cursor()
@@ -29,7 +29,7 @@ def test_db_connection():
         res = cur.fetchone()[0]
         assert res == 1
     finally:
-        db.pool.putconn(conn)
+        db.get_pool().putconn(conn)
 
 
 # ══════════════════════════════════════════════════════════════════════

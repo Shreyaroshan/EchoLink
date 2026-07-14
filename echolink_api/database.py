@@ -17,18 +17,25 @@ DB_CONFIG = {
     'password': os.getenv('DB_PASSWORD', 'postgresql'),
 }
 
-# Thread-safe connection pool (min 2, max 10 connections)
-pool = psycopg2.pool.ThreadedConnectionPool(2, 10, **DB_CONFIG)
+# Thread-safe connection pool (initialized lazily on first query)
+_pool = None
+
+def get_pool():
+    global _pool
+    if _pool is None:
+        _pool = psycopg2.pool.ThreadedConnectionPool(2, 10, **DB_CONFIG)
+    return _pool
 
 
 @contextmanager
 def get_db():
     """Get a DB connection from the pool, return it after use."""
-    conn = pool.getconn()
+    db_pool = get_pool()
+    conn = db_pool.getconn()
     try:
         yield conn
     finally:
-        pool.putconn(conn)
+        db_pool.putconn(conn)
 
 
 def query(sql: str, params=None) -> list[dict]:
