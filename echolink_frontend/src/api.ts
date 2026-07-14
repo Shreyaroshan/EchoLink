@@ -1,4 +1,5 @@
-const BASE = (import.meta.env && import.meta.env.VITE_API_URL) || `${window.location.protocol}//${window.location.hostname}:8000`;
+const isLocalDev = typeof window !== 'undefined' && window.location.port === '5173';
+const BASE = (import.meta.env && import.meta.env.VITE_API_URL) || (isLocalDev ? 'http://localhost:8000' : window.location.origin);
 
 // ── Types ──────────────────────────────────────────────────────────────
 
